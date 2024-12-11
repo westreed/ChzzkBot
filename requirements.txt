@@ -1,0 +1,7 @@
+chzzk-sdk==0.1.2
+fastapi
+uvicorn
+jinja2
+google-api-python-client
+google-cloud-texttospeech
+pyinstaller
