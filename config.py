@@ -72,6 +72,14 @@ def load_config():
                     tts_max_length = tts_data.get("max_length")
                     int_max_length = min(int(tts_max_length), 100)
                     os.environ["tts_max_length"] = str(int_max_length)
+
+                if not is_blank(tts_data, "volume"):
+                    tts_volume = tts_data.get("volume")
+                    float_volume = min(float(tts_volume), 1.0)
+                    os.environ["tts_volume"] = str(float_volume)
+                else:
+                    os.environ["tts_volume"] = "1.0"
+
     except Exception as e:
         _log.error(e)
         input("Press Enter to exit...")

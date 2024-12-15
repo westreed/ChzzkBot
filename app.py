@@ -13,6 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 import tts
 from config import load_config, get_env
+from event_message import EventMessage
 from manager import ConnectionManager
 
 logging.basicConfig(
@@ -35,12 +36,13 @@ templates = Environment(loader=FileSystemLoader("templates"))
 @app.get("/", response_class=HTMLResponse)
 async def home():
     template = templates.get_template("index.html")
-    return template.render()
+    return template.render(headers={"Cache-Control": "no-store"})
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
+    await manager.send_message(EventMessage("volume", get_env("tts_volume")).json, websocket=websocket)
     try:
         while True:
             data = await websocket.receive_text()

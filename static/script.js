@@ -2,13 +2,20 @@ const ws = new WebSocket("ws://localhost:5005/ws");
 const queue = [];
 
 ws.onmessage = function(event) {
-    console.log(event);
-    const audioBlob = new Blob([event.data], { type: 'audio/mp3' });
-    const audioUrl = URL.createObjectURL(audioBlob);
-    queue.push(audioUrl);
-//    const audioPlayer = document.getElementById("audioPlayer");
-//    audioPlayer.src = audioUrl;
-//    audioPlayer.play();
+    const event_data = event.data;
+
+    if (typeof event_data === "string") {
+        const jsonData = JSON.parse(event_data);
+        if (jsonData["event_type"] === "volume") {
+            const audioPlayer = document.getElementById("player");
+            audioPlayer.volume = jsonData["message"];
+            console.log("Set TTS Volume ", jsonData["message"]);
+        }
+    } else {
+        const audioBlob = new Blob([event_data], { type: 'audio/mp3' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        queue.push(audioUrl);
+    }
 };
 
 

@@ -25,6 +25,7 @@ google tts api를 사용하기 위해, 다운로드 받았던 json 파일을 Chz
 - dynamic_speaking: "true" or "false", 설정할 경우 채팅 내용이 길수록 빠르게 읽어줍니다.
 - pitch: -20.00 ~ 20.00 (default: 0.00)
 - max_length: 허용하고 싶은 채팅의 최대 길이, 최대 100자 (default: 100)
+- volume: TTS 볼륨 크기를 조절, 0.0 ~ 1.0 사이의 값으로 설정합니다.
 """
 
 confing_json = """{
@@ -39,7 +40,8 @@ confing_json = """{
         "speaking_rate": 1,
         "dynamic_speaking": "true",
         "pitch": 1,
-        "max_length": 200
+        "max_length": 100,
+        "volume": 0.5
     }
 }"""
 
