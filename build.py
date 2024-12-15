@@ -1,5 +1,8 @@
 import os
+import shutil
 import subprocess
+import zipfile
+from zipfile import ZipFile
 
 readme_content = """config.json 가이드
 
@@ -59,11 +62,19 @@ def build(spec_name: str):
     raise EnvironmentError(f"pyinstaller가 설치되어 있지 않습니다.")
 
 
-def compress():
-    import shutil
-    import zipfile
-    from zipfile import ZipFile
+def zip_folder(zipf: ZipFile, temp_path: str, folder_path: str):
+    rel_path = os.path.join(temp_path, folder_path)
+    for root, dirs, files in os.walk(rel_path):
+        for file in files:
+            # 파일의 전체 경로
+            file_path = os.path.join(root, file)
+            # 파일을 ZIP에 추가하되, ZIP 내부 경로는 루트 폴더에서의 상대 경로로 설정
+            arcname = os.path.join(folder_path, file)
+            zipf.write(file_path, arcname)
 
+
+
+def compress():
     temp_path = "chzzk-bot"
     output_path = "output"
 
@@ -92,11 +103,11 @@ def compress():
 
     # compress
     with ZipFile(f"{output_path}/{zip_name}", 'w', zipfile.ZIP_DEFLATED) as zipf:
-        zipf.write(f"{temp_path}/static")
-        zipf.write(f"{temp_path}/templates")
-        zipf.write(f"{temp_path}/{build_name}")
-        zipf.write(f"{temp_path}/{readme_name}")
-        zipf.write(f"{temp_path}/{config_name}")
+        zip_folder(zipf, temp_path, "static")
+        zip_folder(zipf, temp_path, "templates")
+        zipf.write(f"{temp_path}/{build_name}", arcname=build_name)
+        zipf.write(f"{temp_path}/{readme_name}", arcname=readme_name)
+        zipf.write(f"{temp_path}/{config_name}", arcname=config_name)
 
     # remove temp
     shutil.rmtree(temp_path, onerror=lambda x: print(x))
